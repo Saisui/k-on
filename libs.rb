@@ -258,9 +258,9 @@ class Array
       bll.each do |n|
           k = n%12
           bes << (case k
-                  when 0..6
+          when 0..6
               k
-                  when 7..11
+          when 7..11
               case  k
               when  7 then 5
               when  8 then 4
@@ -404,94 +404,94 @@ class Array
   end
 
   ##  按顺序根据条件进行组合
-  def mmt &blk
-    ss=self
-    return self if ss.empty?
-    us=ss
-    res = []
-    buf = []
-    res << [us[0]]
-    buf << us[0]
-    until us[1].nil?
-       #                与buffer组合    第一个  前一个  当前  
-      if not(((  ((   yield(buf+[us[1]],buf[0],us[0],us[1])   )) rescue true)))
-        res << []
-        buf = [us[1]]
-      else
-        buf << us[1]
-      end
-      res.last << us[1]
-      us=us[1..-1]
-    end
-    res
-  end
- # 需要 mmt
-  def mmtab &blk 
-   self.mmt do |arr, i, a, b|
-     yield(a,b)
+ def mmt &blk
+   ss=self
+   return self if ss.empty?
+   us=ss
+   res = []
+   buf = []
+   res << [us[0]]
+   buf << us[0]
+   until us[1].nil?
+      #                与buffer组合    第一个  前一个  当前  
+     if not(((  ((   yield(buf+[us[1]],buf[0],us[0],us[1])   )) rescue true)))
+       res << []
+       buf = [us[1]]
+     else
+       buf << us[1]
+     end
+     res.last << us[1]
+     us=us[1..-1]
    end
+   res
  end
+ # 需要 mmt
+ def mmtab &blk 
+  self.mmt do |arr, i, a, b|
+    yield(a,b)
+  end
+end
 
 #需要 mmt
-  def mmtib &blk 
-    self.mmt do |arr, i, a, b|
-      yield(i,b)
-    end
+def mmtib &blk 
+  self.mmt do |arr, i, a, b|
+    yield(i,b)
   end
-  def mmtr &blk # 需要 mmt
-    self.mmt do |arr, i, a, b|
-      yield(arr)
-    end
+end
+def mmtr &blk # 需要 mmt
+  self.mmt do |arr, i, a, b|
+    yield(arr)
   end
-  def mmtri &blk # 需要 mmt
-    self.mmt do |arr, i, a, b|
-      yield(arr,i)
-    end
+end
+def mmtri &blk # 需要 mmt
+  self.mmt do |arr, i, a, b|
+    yield(arr,i)
   end
+end
 #对于所有的a，都有条件。符合。  如  对于所有a <- A, 存在 b <- B， 使得 b < a。
-  def forall  
-    res = true
-    self.each do |a|
-      res = false and break if not yield(a)
-    end
-    res
+def forall  
+  res = true
+  self.each do |a|
+    res = false and break if not yield(a)
   end
-  def forexist
-    res = false
-    self.each do |a|
-      res = true and break if yield(a)
-    end
-    res
+  res
+end
+def forexist
+  res = false
+  self.each do |a|
+    res = true and break if yield(a)
   end
-  def forExs
-    res = []
-    self.each do |a|
-        if yield(a)
-            res << a
-        end
-    end
-    res
-  end
-  def powerset
-    num = 2**size
-    ps = Array.new(num, [])
-    self.each_index do |i|
-      #print "i := #{i}/n"
-      a = 2**i
-      b = 2**(i+1) - 1
-      j = 0
-      while j < num-1
-      #print "j := #{j}, (#{j+a}..#{j+b})/n"
-        for j in j+a..j+b
-          ps[j] += [self[i]]
-          #print "ps[#{j}] = #{ps[j]}/n"
-        end
-        #print "j := #{j}/n"
-        j += 1
+  res
+end
+def forExs
+  res = []
+  self.each do |a|
+      if yield(a)
+          res << a
       end
-    end
-    ps
   end
+  res
+end
+def powerset
+  num = 2**size
+  ps = Array.new(num, [])
+  self.each_index do |i|
+    #print "i := #{i}/n"
+    a = 2**i
+    b = 2**(i+1) - 1
+    j = 0
+    while j < num-1
+    #print "j := #{j}, (#{j+a}..#{j+b})/n"
+      for j in j+a..j+b
+        ps[j] += [self[i]]
+        #print "ps[#{j}] = #{ps[j]}/n"
+      end
+      #print "j := #{j}/n"
+      j += 1
+    end
+  end
+  ps
+end
 end
 
 # 通用方法
@@ -515,15 +515,15 @@ class Array
             res[i]<<self[i*n+j]   }}
           res.map!{|a| a.map!{|e| e.nil? ? r[0] : e }}
       end
-     res
+      res
   end
   alias ingof in_groups_of
   # 检查是否包含某个元素
   def has? *args
     res = false
-    if args.empty? then res = false else self.each{ |e| args.each{ |r| (res = true) if (e == r) } } 
-                                         res 
-   end
+     if args.empty? then res = false else self.each{ |e| args.each{ |r| (res = true) if (e == r) } } 
+      res 
+    end
   end
   def all? *args
     fg = 0
@@ -531,6 +531,10 @@ class Array
     else args.each{|r| self.each{|e|  (fg+=1 and break) if e==r}}
     end
     fg == args.size ? true : false
+  end
+  # 筛选元素，依赖 Array#has?
+  def rm *args
+      self.select{|a| not (args.has? a) }
   end
 end
 
@@ -567,9 +571,9 @@ module Enumerable
       bll.each do |n|
           k = n%12
           bes << (case k
-                  when 0..6
+          when 0..6
               k
-                  when 7..11
+          when 7..11
               case  k
               when  7 then 5
               when  8 then 4
@@ -762,26 +766,26 @@ class Continuum
   # 获得 在
   def wr w, n=-1
     n = (n==-1 ? w.to_s.split(".")[-1].size : n)
-    ss=self
-    res = []
-    a = @lbound
-    b = @rbound
-    z = a
-    exes = []
-    exes += ((@exclude_begin ? [@lbound] : []) + (@exclude_end ? [@rbound] : []) + @exclude_nums)
-    if a<b then
-      while z < b
-           res << z
-           z += w
-      end 
-    elsif a>b then
-      while z > b
-          res << z
-          z -= w
+      ss=self
+      res = []
+      a = @lbound
+      b = @rbound
+      z = a
+      exes = []
+      exes += ((@exclude_begin ? [@lbound] : []) + (@exclude_end ? [@rbound] : []) + @exclude_nums)
+      if a<b then
+        while z < b
+             res << z
+             z += w
+        end 
+      elsif a>b then
+        while z > b
+            res << z
+            z -= w
+        end
       end
-    end
-    res << b
-    res.rm(*exes).map{|a| a.round(n)}
+        res << b
+      res.rm(*exes).map{|a| a.round(n)}
   end
 
   def r= b ; @ubound = b ;end
